@@ -1,0 +1,47 @@
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+const int SIZE = 25;
+
+struct Cat
+{
+  char name[SIZE];
+  int age;
+};
+
+//------------------------
+#include "Header.h"
+
+void enterCat();
+
+int main()
+{
+  enterCat();
+
+  return 0;
+}
+// ---------------------
+
+void enterCat()
+{
+  Cat cats[SIZE];
+  fstream file;
+
+  cout << "Enter 3 cat names and their ages: \n\n";
+  file.open("critters.bin", ios::out | ios::binary);
+ 
+      for (int i = 0; i < 3; i++)
+      {
+          cout << "NAME:  ";
+          cin.getline(cats[i].name, SIZE);
+          file.write(cats[i].name, sizeof(cats[i].name));
+          //cout << "AGE:  ";
+          //cin >> cats[i].age;
+          //file.write(reinterpret_cast<char*>(&cats[i].age), sizeof(cats[i].age));
+          cin.ignore();
+      }
+      file.close();
+ 
+  cout << "Record written to file.";
+}
