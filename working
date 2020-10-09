@@ -1,0 +1,88 @@
+
+
+// =========================================================================
+
+// Header.h
+
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+using namespace std;
+
+struct Cat
+{
+  char name[20];
+  int age;
+};
+
+// =========================================================================
+
+// main.cpp
+
+#include "Header.h"
+
+void enterCat();
+
+int main()
+{
+  enterCat();
+
+  return 0;
+}   // end of main()
+
+// =========================================================================
+
+// driver.cpp
+
+#include "Header.h"
+
+void enterCat()
+{
+    Cat cat;
+    fstream file;
+
+    cout << "Enter 3 cat names and their ages: \n\n";
+    file.open("critters.bin", ios::binary | ios::out);
+  
+    int count = 0;
+    while(!file.eof()&&count < 3)
+    {
+        cout << "NAME:  ";
+        cin.get(cat.name, 20);
+        file.write(cat.name, sizeof(Cat));
+        cout << "AGE:  ";
+        cin >> cat.age;
+        file.write(reinterpret_cast<char*>(&cat.age), sizeof(cat.age));
+        cin.ignore();
+        count++;
+    }
+    file.close();
+ 
+    cout << "Record written to file." << endl << endl;
+    
+    file.open("critters.bin", ios::binary | ios::app | ios::out | ios::in);
+    file.seekp(0L, ios::end);
+    cout << "Enter one more cat" << endl << "NAME:   ";
+    cin.get(cat.name, 20);
+    file.write(cat.name, sizeof(Cat));
+    cout << "AGE:  ";
+    cin >> cat.age;
+    file.write(reinterpret_cast<char*>(&cat.age), sizeof(cat.age));
+    
+    count = 0;
+     
+    file.seekg(0L, ios::beg);
+
+    cout << "\nHere is a list of all cats:\n";
+    while(!file.eof()&&count < 4)
+    {
+        file.read(cat.name, sizeof(Cat));
+        cout << setw(10) << left << cat.name;
+        file.read(reinterpret_cast<char*>(&cat.age), sizeof(cat.age));
+        cout << cat.age << endl;
+        count++;
+    }
+    file.close();
+}
+
+// =========================================================================
